@@ -21,7 +21,7 @@ public class RatingContextSeed
 
         await policy.ExecuteAsync(async () =>
         {
-            FakeData.Init(10, new DateTime(2022, 01, 01), new DateTime(2022, 12, 31));
+            FakeData.Init(50, new DateTime(2020, 01, 01), new DateTime(2022, 12, 31));
 
             if (!context.Rankings.Any())
             {
