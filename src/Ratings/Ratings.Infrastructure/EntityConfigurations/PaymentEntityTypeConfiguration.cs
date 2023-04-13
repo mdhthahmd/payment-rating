@@ -12,48 +12,42 @@ public class PaymentEntityTypeConfiguration : IEntityTypeConfiguration<Payment>
         paymentConfiguration.ToTable("payments", RatingContext.DEFAULT_SCHEMA);
 
         paymentConfiguration.HasKey(o => o.Id);
-        paymentConfiguration.Ignore(b => b.DomainEvents);
+        // paymentConfiguration.Ignore(b => b.DomainEvents);
 
         paymentConfiguration.Property(o => o.Id)
-            .UseHiLo("paymentseq", RatingContext.DEFAULT_SCHEMA);
-
-        paymentConfiguration.Property(a => a.Id)
+            //.UseHiLo("paymentseq", RatingContext.DEFAULT_SCHEMA);
             .HasColumnName("id");
 
+
         paymentConfiguration
-            .Property<int>("EmployerId")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .Property(a => a.EmployerId)
             .HasColumnName("employer_id")
             .IsRequired();
 
 
         paymentConfiguration
-            .Property<DateTime>("_contributionMonth")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .Property(a => a.ContributionMonth)
             .HasColumnName("contribution_month")
             .IsRequired();
 
         paymentConfiguration
-            .Property<DateTime>("_dueDate")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .Property(a => a.DueDate)
             .HasColumnName("due_date")
             .IsRequired();
 
         paymentConfiguration
-            .Property<DateTime>("_paymentDate")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .Property(a => a.PaymentDate)
             .HasColumnName("payment_date")
             .IsRequired();
 
         paymentConfiguration
-            .Property<decimal>("_paidAmount")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .Property(a => a.PaidAmount)
+            .HasPrecision(16,2)
             .HasColumnName("paid_amount")
             .IsRequired();
 
         paymentConfiguration
-            .Property<bool>("_status")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .Property(a => a.Status)
             .HasColumnName("status")
             .IsRequired();
         
