@@ -39,9 +39,9 @@ public class RatingContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new PaymentEntityTypeConfiguration());
         //modelBuilder.ApplyConfiguration(new PaymentStatusEntityTypeConfiguration());
 
-        FakeData.Init(1, new DateTime(2020,01,01), new DateTime(2022,12,31));
+        FakeData.Init(100, new DateTime(2020,01,01), new DateTime(2022,12,31));
 
-        modelBuilder.Entity<Employer>().HasData(FakeData.Employers);
+        modelBuilder.Entity<Payment>().HasData(FakeData.Payments);
         // modelBuilder.Entity<Payment>().HasData(FakeData.Posts);
         // modelBuilder.Entity<PaymentStatus>().HasData(FakeData.Employers);
 

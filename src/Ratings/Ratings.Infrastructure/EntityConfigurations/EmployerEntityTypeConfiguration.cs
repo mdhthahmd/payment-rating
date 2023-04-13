@@ -12,12 +12,12 @@ public class EmployerEntityTypeConfiguration : IEntityTypeConfiguration<Employer
 
         employerConfiguration.HasKey(o => o.Id);
 
-        employerConfiguration.Ignore(b => b.DomainEvents);
+        // employerConfiguration.Ignore(b => b.DomainEvents);
 
         employerConfiguration.Property(o => o.Id)
-            .HasColumnName("id")
+            .HasColumnName("id");
             //.UseIdentityColumn(0,1);
-            .UseHiLo("employerseq", RatingContext.DEFAULT_SCHEMA);
+            // .UseHiLo("employerseq", RatingContext.DEFAULT_SCHEMA);
 
         employerConfiguration.Property(a => a.Name)
             .HasColumnName("name")

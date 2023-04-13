@@ -1,37 +1,39 @@
 using Ratings.Domain.SeedWork;
 
 namespace Ratings.Domain.AggregatesModel.EmployerAggregate;
-public class Payment : Entity
+public class Payment // : Entity
 {
-    private DateTime _contributionMonth;
-    private DateTime _dueDate;
-    private DateTime _paymentDate;
-    private decimal _paidAmount;
-    private bool _status;
+    public int Id { get; set; }
+    public int EmployerId { get; set; }
+    public  DateTime ContributionMonth { get; set; }
+    public DateTime DueDate { get; set;}
+    public DateTime PaymentDate { get; set;}
+    public decimal PaidAmount { get; set; }
+    public bool Status { get; set; }
 
     protected Payment() { }
 
     public Payment(DateTime ContributionMonth, DateTime DueDate, DateTime PaymentDate, decimal PaidAmount)
     {
-        _contributionMonth = ContributionMonth;
-        _dueDate = ContributionMonth.AddMonths(1);
-        _paymentDate = PaymentDate;
-        _paidAmount = PaidAmount;
-        _status = false;
+        this.ContributionMonth = ContributionMonth;
+        this.DueDate = ContributionMonth.AddMonths(1);
+        this.PaymentDate = PaymentDate;
+        this.PaidAmount = PaidAmount;
+        this.Status = false;
     }
 
     public Payment(DateTime ContributionMonth, DateTime DueDate, DateTime PaymentDate, decimal PaidAmount, bool Status)
     {
-        _contributionMonth = ContributionMonth;
-        _dueDate = ContributionMonth.AddMonths(1);
-        _paymentDate = PaymentDate;
-        _paidAmount = PaidAmount;
-        _status = Status;
+        this.ContributionMonth = ContributionMonth;
+        this.DueDate = ContributionMonth.AddMonths(1);
+        this.PaymentDate = PaymentDate;
+        this.PaidAmount = PaidAmount;
+        this.Status = Status;
     }
 
     public void MakePayment()
     {
-        _status = true;
+        Status = true;
     }
 
 }
