@@ -12,42 +12,42 @@ public class PaymentEntityTypeConfiguration : IEntityTypeConfiguration<Payment>
         paymentConfiguration.ToTable("payments", RatingContext.DEFAULT_SCHEMA);
 
         paymentConfiguration.HasKey(o => o.Id);
-        // paymentConfiguration.Ignore(b => b.DomainEvents);
+        
+        paymentConfiguration.Ignore(b => b.DomainEvents);
 
         paymentConfiguration.Property(o => o.Id)
-            //.UseHiLo("paymentseq", RatingContext.DEFAULT_SCHEMA);
-            .HasColumnName("id");
-
+            .HasColumnName("id")
+            .UseHiLo("paymentseq", RatingContext.DEFAULT_SCHEMA);
+            
 
         paymentConfiguration
-            .Property(a => a.EmployerId)
+            .Property<int>("EmployerId")
             .HasColumnName("employer_id")
             .IsRequired();
 
-
         paymentConfiguration
-            .Property(a => a.ContributionMonth)
+            .Property<DateTime>("_contributionMonth")
             .HasColumnName("contribution_month")
             .IsRequired();
 
         paymentConfiguration
-            .Property(a => a.DueDate)
+            .Property<DateTime>("_dueDate")
             .HasColumnName("due_date")
             .IsRequired();
 
         paymentConfiguration
-            .Property(a => a.PaymentDate)
+            .Property<DateTime>("_paymentDate")
             .HasColumnName("payment_date")
             .IsRequired();
 
         paymentConfiguration
-            .Property(a => a.PaidAmount)
+            .Property<decimal>("_paidAmount")
             .HasPrecision(16,2)
             .HasColumnName("paid_amount")
             .IsRequired();
 
         paymentConfiguration
-            .Property(a => a.Status)
+            .Property<bool>("_status")
             .HasColumnName("status")
             .IsRequired();
         

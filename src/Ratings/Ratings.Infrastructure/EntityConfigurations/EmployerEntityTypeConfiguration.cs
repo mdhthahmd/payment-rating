@@ -12,17 +12,32 @@ public class EmployerEntityTypeConfiguration : IEntityTypeConfiguration<Employer
 
         employerConfiguration.HasKey(o => o.Id);
 
-        // employerConfiguration.Ignore(b => b.DomainEvents);
+        employerConfiguration.Ignore(b => b.DomainEvents);
 
         employerConfiguration.Property(o => o.Id)
+            //.UseIdentityColumn();
+            .UseHiLo("employerseq", RatingContext.DEFAULT_SCHEMA)
             .HasColumnName("id");
-            //.UseIdentityColumn(0,1);
-            // .UseHiLo("employerseq", RatingContext.DEFAULT_SCHEMA);
 
         employerConfiguration.Property(a => a.Name)
             .HasColumnName("name")
             .HasMaxLength(200)
             .IsRequired();
+
+        employerConfiguration.Property(a => a.Points)
+            .HasColumnName("points")
+            .IsRequired();
+
+        employerConfiguration
+            .Property<int>("_rankingId")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasColumnName("ranking_id")
+            .IsRequired();
+
+        employerConfiguration.HasOne(o => o.Ranking)
+            .WithMany()
+            // .HasForeignKey("OrderStatusId");
+            .HasForeignKey("_rankingId");
 
         var navigation = employerConfiguration.Metadata.FindNavigation(nameof(Employer.Payments));
 

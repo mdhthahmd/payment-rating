@@ -2,9 +2,10 @@ using Ratings.Domain.SeedWork;
 
 namespace Ratings.Domain.AggregatesModel.EmployerAggregate;
 
-public interface IEmployerRepository 
+public interface IEmployerRepository : IRepository<Employer>
 {
-    Employer Add(Employer employer);
+    Task<Employer> GetByIdAsync(int employerId);
     void Update(Employer employer);
-    Task<Employer> GetAsync(int employerId);
+
+
 }

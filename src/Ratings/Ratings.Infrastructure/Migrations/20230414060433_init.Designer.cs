@@ -12,7 +12,7 @@ using Ratings.Infrastructure;
 namespace Ratings.Infrastructure.Migrations
 {
     [DbContext(typeof(RatingContext))]
-    [Migration("20230413103803_init")]
+    [Migration("20230414060433_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,12 @@ namespace Ratings.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.HasSequence("employerseq", "rating")
+                .IncrementsBy(10);
+
+            modelBuilder.HasSequence("paymentseq", "rating")
+                .IncrementsBy(10);
+
             modelBuilder.Entity("Ratings.Domain.AggregatesModel.EmployerAggregate.Employer", b =>
                 {
                     b.Property<int>("Id")
@@ -31,7 +37,7 @@ namespace Ratings.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "employerseq", "rating");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -39,7 +45,17 @@ namespace Ratings.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("name");
 
+                    b.Property<int>("Points")
+                        .HasColumnType("int")
+                        .HasColumnName("points");
+
+                    b.Property<int>("_rankingId")
+                        .HasColumnType("int")
+                        .HasColumnName("ranking_id");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("_rankingId");
 
                     b.ToTable("employers", "rating");
                 });
@@ -51,30 +67,30 @@ namespace Ratings.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("ContributionMonth")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("contribution_month");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("due_date");
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "paymentseq", "rating");
 
                     b.Property<int>("EmployerId")
                         .HasColumnType("int")
                         .HasColumnName("employer_id");
 
-                    b.Property<decimal>("PaidAmount")
+                    b.Property<DateTime>("_contributionMonth")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("contribution_month");
+
+                    b.Property<DateTime>("_dueDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("due_date");
+
+                    b.Property<decimal>("_paidAmount")
                         .HasPrecision(16, 2)
                         .HasColumnType("decimal(16,2)")
                         .HasColumnName("paid_amount");
 
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime>("_paymentDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("payment_date");
 
-                    b.Property<bool>("Status")
+                    b.Property<bool>("_status")
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
@@ -83,6 +99,35 @@ namespace Ratings.Infrastructure.Migrations
                     b.HasIndex("EmployerId");
 
                     b.ToTable("payments", "rating");
+                });
+
+            modelBuilder.Entity("Ratings.Domain.AggregatesModel.EmployerAggregate.Ranking", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ranking", "rating");
+                });
+
+            modelBuilder.Entity("Ratings.Domain.AggregatesModel.EmployerAggregate.Employer", b =>
+                {
+                    b.HasOne("Ratings.Domain.AggregatesModel.EmployerAggregate.Ranking", "Ranking")
+                        .WithMany()
+                        .HasForeignKey("_rankingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ranking");
                 });
 
             modelBuilder.Entity("Ratings.Domain.AggregatesModel.EmployerAggregate.Payment", b =>

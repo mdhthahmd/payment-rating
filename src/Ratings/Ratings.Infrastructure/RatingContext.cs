@@ -14,6 +14,8 @@ public class RatingContext : DbContext, IUnitOfWork
     public const string DEFAULT_SCHEMA = "rating";
     public DbSet<Employer> Employers { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Ranking> Rankings { get; set; }
+
 
     private readonly IMediator _mediator;
     private IDbContextTransaction _currentTransaction;
@@ -37,14 +39,7 @@ public class RatingContext : DbContext, IUnitOfWork
 
         modelBuilder.ApplyConfiguration(new EmployerEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PaymentEntityTypeConfiguration());
-        //modelBuilder.ApplyConfiguration(new PaymentStatusEntityTypeConfiguration());
-
-        FakeData.Init(100, new DateTime(2020,01,01), new DateTime(2022,12,31));
-
-        modelBuilder.Entity<Payment>().HasData(FakeData.Payments);
-        // modelBuilder.Entity<Payment>().HasData(FakeData.Posts);
-        // modelBuilder.Entity<PaymentStatus>().HasData(FakeData.Employers);
-
+        modelBuilder.ApplyConfiguration(new RankingEntityTypeConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }
@@ -61,6 +56,9 @@ public class RatingContext : DbContext, IUnitOfWork
 
         // After executing this line all the changes (from the Command Handler and Domain Event Handlers) 
         // performed through the DbContext will be committed
+
+        var x = this.ChangeTracker.DebugView.LongView;
+
         var result = await base.SaveChangesAsync(cancellationToken);
 
         return true;
