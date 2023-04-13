@@ -15,7 +15,7 @@ public class EmployersController : ControllerBase
         _db = db;
     }
 
-     [HttpPost, Route("")]
+    [HttpPost, Route("")]
     public IActionResult AddEmployer()
     {
 
@@ -28,21 +28,36 @@ public class EmployersController : ControllerBase
         return Ok();
     }
 
-    [HttpPost, Route("{employerId:int}/payments")]
-    public IActionResult AddPayment([FromBody] AddPaymentDto dto, [FromRoute] int employerId)
+
+
+    [HttpGet, Route("")]
+    public IActionResult GetEmployersList()
     {
+        var employers = _db.Employers.Select(a => new EmployerListDto 
+        {
+            Id = a.Id,
+            Name  = a.Name,
+            Stars = 1,
+            Points = 100
+        }).ToList();
 
-        if(employerId != dto.EmployerId) return BadRequest();
-
-        var employer = _db.Employers.FirstOrDefault(a => a.Id == employerId);
-        if(employer == null) return NotFound();
-
-        var newPayment = new Payment(DateTime.Now, DateTime.Now, DateTime.Now, 100.4m);
-        newPayment.EmployerId = employerId;
-
-        _db.Payments.Add(newPayment);
-        _db.SaveChanges();
-
-        return Ok();
+        return Ok(employers);
     }
+    
+
+
+
+    [HttpGet, Route("dropdown-list")]
+    public IActionResult GetEmployersForDropDown()
+    {
+        var employers = _db.Employers.Select(a => new EmployerDropDownList 
+        {
+            Id = a.Id,
+            Name  = a.Name
+        }).ToList();
+
+        return Ok(employers);
+    }
+
+    
 }

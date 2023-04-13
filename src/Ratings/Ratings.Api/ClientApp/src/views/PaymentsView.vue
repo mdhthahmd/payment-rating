@@ -2,116 +2,51 @@
 import { ref } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/vue/20/solid'
+import axios from 'axios'
+
+let employersDropdownItems = ref(null)
+let paymentList = ref(null)
 
 
-const transactions = [
-    {
-        id: 'AAPS0L',
-        company: 'Chase & Co.',
-        share: 'CAC',
-        commission: '+$4.37',
-        price: '$3,509.00',
-        quantity: '12.00',
-        netAmount: '$4,397.00',
-    },
-    {
-        id: 'AAPS0L',
-        company: 'Chase & Co.',
-        share: 'CAC',
-        commission: '+$4.37',
-        price: '$3,509.00',
-        quantity: '12.00',
-        netAmount: '$4,397.00',
-    },
-    {
-        id: 'AAPS0L',
-        company: 'Chase & Co.',
-        share: 'CAC',
-        commission: '+$4.37',
-        price: '$3,509.00',
-        quantity: '12.00',
-        netAmount: '$4,397.00',
-    },
-    {
-        id: 'AAPS0L',
-        company: 'Chase & Co.',
-        share: 'CAC',
-        commission: '+$4.37',
-        price: '$3,509.00',
-        quantity: '12.00',
-        netAmount: '$4,397.00',
-    },
-    {
-        id: 'AAPS0L',
-        company: 'Chase & Co.',
-        share: 'CAC',
-        commission: '+$4.37',
-        price: '$3,509.00',
-        quantity: '12.00',
-        netAmount: '$4,397.00',
-    },
-    {
-        id: 'AAPS0L',
-        company: 'Chase & Co.',
-        share: 'CAC',
-        commission: '+$4.37',
-        price: '$3,509.00',
-        quantity: '12.00',
-        netAmount: '$4,397.00',
-    },
-    // More transactions...
-]
-
-
-
-
-const team = [
-
-
-    {
-        name: 'Tom Cook',
-        email: 'tom.cook@example.com',
-        href: '#',
-        imageUrl:
-            'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-        name: 'Whitney Francis',
-        email: 'whitney.francis@example.com',
-        href: '#',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-        name: 'Leonard Krasner',
-        email: 'leonard.krasner@example.com',
-        href: '#',
-        imageUrl:
-            'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-        name: 'Floyd Miles',
-        email: 'floyd.miles@example.com',
-        href: '#',
-        imageUrl:
-            'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-        name: 'Emily Selman',
-        email: 'emily.selman@example.com',
-        href: '#',
-        imageUrl:
-            'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-]
+axios
+    .get("api/payments")
+    .then(response => paymentList.value = response.data);
 
 const open = ref(false)
-const contributionDate = ref();
-const paidDate = ref();
-const paymentStatus = ref();
 
 
+const employer = ref('');
+const contributionMonth = ref();
+const amount = ref('')
+const paymentDate = ref()
+const paymentStatus = ref(false);
+
+function postPaymentData()
+{
+    // public int EmployerId { get; set; }
+    // public DateTime ContributionDate { get; set; }
+    // public DateTime PaymentDate { get; set; }
+    // public decimal Amount { get; set; }
+    // public bool Status { get; set; }
+    axios.post("api/payments", {
+        EmployerId: employer.value,
+        Amount:  amount.value,
+        Status : paymentStatus.value == "1",
+        ContributionDate: contributionMonth.value,
+        PaymentDate : paymentDate.value
+    })
+    .then(response =>  { open.value = false; 
+        axios
+    .get("api/payments")
+    .then(response => paymentList.value = response.data);} )
+}
+
+
+
+
+axios
+    .get("api/employers/dropdown-list")
+    .then(response => employersDropdownItems.value = response.data);
 
 
 </script>
@@ -132,7 +67,7 @@ const paymentStatus = ref();
                             leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0"
                             leave-to="translate-x-full">
                             <DialogPanel class="pointer-events-auto w-screen max-w-md">
-                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl" @submit.prevent="postPaymentData">
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-red-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
@@ -156,11 +91,21 @@ const paymentStatus = ref();
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="space-y-6 pb-5 pt-6">
                                                     <div>
+                                                        <label for="employer"
+                                                            class="block text-sm font-medium leading-6 text-gray-900">Employer</label>
+                                                            <div class="mt-2">
+                                                                <select v-model="employer" id="employer" name="employer" autocomplete="employer" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                                                    <option disabled value="">Please select one</option>
+                                                                    <option :value="emp.id" v-for="emp in employersDropdownItems" :key="emp.id">{{ emp.name }}</option>
+                                                                </select>
+                                                            </div>
+                                                    </div>
+                                                    <div>
                                                         <label for="contribution-month"
                                                             class="block text-sm font-medium leading-6 text-gray-900">Contribution
                                                             Month</label>
                                                         <div class="mt-2">
-                                                            <VueDatePicker v-model="contributionDate"
+                                                            <VueDatePicker v-model="contributionMonth"
                                                                 :enable-time-picker="false"></VueDatePicker>
                                                         </div>
                                                     </div>
@@ -168,14 +113,13 @@ const paymentStatus = ref();
                                                         <label for="payment-amount"
                                                             class="block text-sm font-medium leading-6 text-gray-900">Amount</label>
                                                         <div class="mt-2">
-                                                            <label for="price"
-                                                                class="block text-sm font-medium leading-6 text-gray-900">Price</label>
+                                                            
                                                             <div class="relative mt-2 rounded-md shadow-sm">
                                                                 <div
                                                                     class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                                     <span class="text-gray-500 sm:text-sm">$</span>
                                                                 </div>
-                                                                <input type="text" name="price" id="price"
+                                                                <input type="text" name="price" id="price" v-model="amount"
                                                                     class="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
                                                                     placeholder="0.00" aria-describedby="price-currency" />
                                                                 <div
@@ -191,7 +135,7 @@ const paymentStatus = ref();
                                                             class="block text-sm font-medium leading-6 text-gray-900">Payment
                                                             Date</label>
                                                         <div class="mt-2">
-                                                            <VueDatePicker v-model="paidDate" :enable-time-picker="false">
+                                                            <VueDatePicker v-model="paymentDate" :enable-time-picker="false">
                                                             </VueDatePicker>
                                                         </div>
                                                     </div>
@@ -205,14 +149,12 @@ const paymentStatus = ref();
                                                                         aria-describedby="privacy-public-description"
                                                                         type="radio"
                                                                         class="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-600"
-                                                                        checked="" />
+                                                                        checked=""
+                                                                        v-model="paymentStatus" value="0"/>
                                                                 </div>
                                                                 <div class="pl-7 text-sm leading-6">
                                                                     <label for="privacy-public"
                                                                         class="font-medium text-gray-900">Pending</label>
-                                                                    <p id="privacy-public-description"
-                                                                        class="text-gray-500">Everyone with the link will
-                                                                        see this project.</p>
                                                                 </div>
                                                             </div>
                                                             <div>
@@ -222,14 +164,12 @@ const paymentStatus = ref();
                                                                             name="privacy"
                                                                             aria-describedby="privacy-private-to-project-description"
                                                                             type="radio"
-                                                                            class="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-600" />
+                                                                            class="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-600" 
+                                                                            v-model="paymentStatus" value="1"/>
                                                                     </div>
                                                                     <div class="pl-7 text-sm leading-6">
                                                                         <label for="privacy-private-to-project"
                                                                             class="font-medium text-gray-900">Paid</label>
-                                                                        <p id="privacy-private-to-project-description"
-                                                                            class="text-gray-500">Only members of this
-                                                                            project would be able to access.</p>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -291,51 +231,39 @@ const paymentStatus = ref();
                                         <tr>
                                             <th scope="col"
                                                 class="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                                                Transaction ID</th>
+                                                Payment ID</th>
                                             <th scope="col"
                                                 class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                                Company</th>
+                                                Amount</th>
                                             <th scope="col"
                                                 class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                                Share</th>
+                                                DueDate</th>
                                             <th scope="col"
                                                 class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                                Commision</th>
+                                                Payment Date</th>
                                             <th scope="col"
                                                 class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                                Price</th>
+                                                Status</th>
                                             <th scope="col"
                                                 class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                                Quantity</th>
-                                            <th scope="col"
-                                                class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                                Net amount</th>
-                                            <th scope="col" class="relative whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-0">
-                                                <span class="sr-only">Edit</span>
-                                            </th>
+                                                Contribution Month</th>
+                                            
                                         </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 bg-white">
-                                    <tr v-for="transaction in transactions" :key="transaction.id">
+                                    <tr v-for="payment in paymentList" :key="payment.id">
                                         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{{
-                                            transaction.id }}</td>
+                                            payment.id }}</td>
                                         <td class="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{{
-                                            transaction.company }}</td>
+                                            payment.paidAmount }}</td>
                                         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{{
-                                            transaction.share }}</td>
+                                            payment.dueDate }}</td>
                                         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{{
-                                            transaction.commission }}</td>
+                                            payment.paymentDate }}</td>
                                         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{{
-                                            transaction.price }}</td>
+                                            payment.status }}</td>
                                         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{{
-                                            transaction.quantity }}</td>
-                                        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{{
-                                            transaction.netAmount }}</td>
-                                        <td
-                                            class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                            <a href="#" class="text-red-600 hover:text-red-900">Edit<span
-                                                    class="sr-only">, {{ transaction.id }}</span></a>
-                                        </td>
+                                            payment.contributionMonth }}</td>                                        
                                     </tr>
                                 </tbody>
                             </table>

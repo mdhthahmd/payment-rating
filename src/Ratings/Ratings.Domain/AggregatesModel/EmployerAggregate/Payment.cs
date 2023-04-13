@@ -13,19 +13,19 @@ public class Payment // : Entity
 
     protected Payment() { }
 
-    public Payment(DateTime ContributionMonth, DateTime DueDate, DateTime PaymentDate, decimal PaidAmount)
+    public Payment(DateTime ContributionMonth, DateTime PaymentDate, decimal PaidAmount)
     {
         this.ContributionMonth = ContributionMonth;
-        this.DueDate = ContributionMonth.AddMonths(1);
+        this.DueDate = new DateTime(ContributionMonth.Year, ContributionMonth.Month + 1, 15);
         this.PaymentDate = PaymentDate;
         this.PaidAmount = PaidAmount;
         this.Status = false;
     }
 
-    public Payment(DateTime ContributionMonth, DateTime DueDate, DateTime PaymentDate, decimal PaidAmount, bool Status)
+    public Payment(DateTime ContributionMonth, DateTime PaymentDate, decimal PaidAmount, bool Status)
     {
         this.ContributionMonth = ContributionMonth;
-        this.DueDate = ContributionMonth.AddMonths(1);
+        this.DueDate = new DateTime(ContributionMonth.Year, ContributionMonth.Month + 1, 15);
         this.PaymentDate = PaymentDate;
         this.PaidAmount = PaidAmount;
         this.Status = Status;
